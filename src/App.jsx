@@ -5,16 +5,17 @@ import styles from "./App.module.scss";
 function App() {
   const [promptMessage, setPromptMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [listPromptMessage, setListPromptMessage] = useState([]);
+  const [listPromptMessages, setListPromptMessages] = useState([]);
 
   const getMessage = () => {
     const promptValue = prompt("Введите значение");
 
-    setPromptMessage(promptValue);
-
-    promptValue?.length < 3
-      ? setErrorMessage("Введенное значение должно содержать минимум 3 символа")
-      : setErrorMessage("");
+    if (promptValue.length < 3) {
+      setErrorMessage("Введенное значение должно содержать минимум 3 символа");
+    } else {
+      setPromptMessage(promptValue);
+      setErrorMessage("");
+    }
   };
 
   return (
@@ -33,9 +34,9 @@ function App() {
           className={styles["button"]}
           disabled={promptMessage.length < 3}
           onClick={() => {
-            setListPromptMessage((prevPromptMessages) => [
-              ...prevPromptMessages,
-              promptMessage,
+            setListPromptMessages((prevListPromptMessages) => [
+              ...prevListPromptMessages,
+              { id: Date.now, value: promptMessage },
             ]);
             setPromptMessage("");
           }}
@@ -47,10 +48,10 @@ function App() {
         <h2 className={styles["list-heading"]}>Список:</h2>
         <p className={styles["no-margin-text"]}>Нет добавленных элементов</p>
         <ul className={styles["list"]}>
-          {listPromptMessage.map((message, i) => {
+          {listPromptMessages.map((item) => {
             return (
-              <li key={message + i} className={styles["list-item"]}>
-                {message}
+              <li key={item.id} className={styles["list-item"]}>
+                {item.value}
               </li>
             );
           })}
